@@ -1,0 +1,6 @@
+/db.sqlite3
+/.git
+/.idea
+/assets
+*.pyc
+.DS_Store
