@@ -16,7 +16,8 @@ def ep_landing_page(request: HttpRequest) -> HttpResponse:
 def ep_items(request: HttpRequest) -> HttpResponse:
     """Эндпоинт для отображения товаров."""
     if request.method == "GET":
-        return render(request, "shop/items.html")
+        context = {"items": range(1, 10)}
+        return render(request, "shop/items.html", context=context)
     else:
         return HttpResponseNotAllowed(permitted_methods=["GET"])
 
