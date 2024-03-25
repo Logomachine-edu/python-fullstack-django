@@ -2,7 +2,7 @@
 name = "django-logo"
 version = "0.1.0"
 description = ""
-authors = ["German Golcov <g.golcov@agimagroup.ru>"]
+authors = ["German Golcov <gerleffx2@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
