@@ -142,3 +142,7 @@ STATICFILES_DIRS = [BASE_DIR / "static"]  # список локаций хран
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Auth
+EASY_LOGIN = True
+AUTH_USER_MODEL = "shop.Customer"

@@ -11,10 +11,16 @@ python -m pip install poetry
 poetry install
 ```
 
-#### Build Django app:
+#### Prepare app for usage
 ```shell
-django-admin startproject <project name>  # Generates Django core components
-python manage.py startapp <app name>  # Generates Django application components
+python manage.py migrate  # Run migrations into database
+python manage.py createsuperuser  # Create admin to log in admin panel
+python manage.py loaddata fixtures.json  # Load initial data into database
+```
+
+#### Run app
+```shell
+python manage.py runserver
 ```
 
 ### Suggest application features:

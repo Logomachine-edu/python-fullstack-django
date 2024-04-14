@@ -7,6 +7,7 @@ class FullMiddlewareProtocol:
 
     Не подлежит наследованию, тк в порядке оптимизации у Middleware стоит держать только полезные методы.
     """
+
     def __init__(self, get_response):
         self.get_response = get_response
         # One-time configuration and initialization.
