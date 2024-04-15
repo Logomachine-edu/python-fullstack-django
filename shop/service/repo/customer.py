@@ -32,7 +32,11 @@ class CustomerQuerySet(models.QuerySet):
     get = get_aggregate
 
 
-customer_repository = UserManager.from_queryset(CustomerQuerySet)()
+class CustomerManager(UserManager.from_queryset(CustomerQuerySet)):
+    pass
+
+
+customer_repository = CustomerManager()
 
 
 class AmountPerItemInfoMap(TypedDict):
