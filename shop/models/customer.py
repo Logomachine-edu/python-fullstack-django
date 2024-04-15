@@ -3,10 +3,9 @@ from decimal import Decimal
 
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.db.models import Sum
 
 from shop.fields import PriceField
-from shop.service.repo.customer import customer_repository
+from shop.service.repo.customer import customer_repository, item_repository
 
 
 class Customer(AbstractUser):
@@ -28,7 +27,7 @@ class Order(models.Model):
     created_at: datetime = models.DateTimeField(auto_now_add=True)
     updated_at: datetime = models.DateTimeField(auto_now=True)
 
-    items_set: models.Manager["Item"]  # RelatedManager
+    item_set: item_repository  # RelatedManager >> item_repository
 
     class Meta:
         ordering = ("-created_at",)
@@ -36,14 +35,6 @@ class Order(models.Model):
     def __str__(self):
         label = "Order" if self.is_payed else "Cart"
         return f"{label} for {self.customer}"
-
-    def get_current_total_price(self) -> Decimal:
-        """Совокупная цена за товары в заказе на данный момент."""
-        return self.items_set.aggregate(Sum("item_info__price", default=0))
-
-    def get_total_items(self) -> int:
-        """Количество товаров в заказе."""
-        return self.items_set.count()
 
 
 class Item(models.Model):
@@ -58,10 +49,15 @@ class Item(models.Model):
         related_name="+",  # Не даем создавать обратную связь
         related_query_name="+",  # Не даем создавать обратную связь
     )
-    cart = models.ForeignKey("shop.Order", on_delete=models.CASCADE)
+    order = models.ForeignKey("shop.Order", on_delete=models.CASCADE)
 
     created_at: datetime = models.DateTimeField(auto_now_add=True)
     updated_at: datetime = models.DateTimeField(auto_now=True)
+
+    objects = item_repository  # Расширение Manager
+
+    def __str__(self):
+        return f"Item {self.item_info} for {self.order}"
 
     @property
     def current_price(self) -> Decimal:

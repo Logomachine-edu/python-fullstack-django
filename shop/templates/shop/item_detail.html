@@ -25,80 +25,83 @@
 
             <div class="col-lg-7 pb-5">
                 <h3 class="font-weight-semi-bold">{{ item_info.name }}</h3>
-                <h3>{{ item_info.price }}</h3>
+                <h3>${{ item_info.price }}</h3>
                 {% if item_info.old_price %}
-                    <h3 class="text-muted ml-2"><del>{{ item_info.old_price }}</del></h3>
+                    <h3 class="text-muted ml-2">
+                        <del>${{ item_info.old_price }}</del>
+                    </h3>
                 {% endif %}
                 <p class="mb-4">{{ item_info.summary }}</p>
-                {# Sizes #}
-                <div class="d-flex mb-3">
-                    <p class="text-dark font-weight-medium mb-0 mr-3">Sizes:</p>
-                    <form>
+                <form action="{% url 'add_item_to_cart' %}" method="post">
+                    {% csrf_token %}
+                    {# Sizes #}
+                    <div class="d-flex mb-3">
+                        <p class="text-dark font-weight-medium mb-0 mr-3">Sizes:</p>
                         <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" class="custom-control-input" id="size-1" name="size">
+                            <input type="radio" class="custom-control-input" id="size-1" value="XS" name="size">
                             <label class="custom-control-label" for="size-1">XS</label>
                         </div>
                         <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" class="custom-control-input" id="size-2" name="size">
+                            <input type="radio" class="custom-control-input" id="size-2" value="S" name="size">
                             <label class="custom-control-label" for="size-2">S</label>
                         </div>
                         <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" class="custom-control-input" id="size-3" name="size">
+                            <input type="radio" class="custom-control-input" id="size-3" value="M" name="size">
                             <label class="custom-control-label" for="size-3">M</label>
                         </div>
                         <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" class="custom-control-input" id="size-4" name="size">
+                            <input type="radio" class="custom-control-input" id="size-4" value="L" name="size">
                             <label class="custom-control-label" for="size-4">L</label>
                         </div>
                         <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" class="custom-control-input" id="size-5" name="size">
+                            <input type="radio" class="custom-control-input" id="size-5" value="XL" name="size">
                             <label class="custom-control-label" for="size-5">XL</label>
                         </div>
-                    </form>
-                </div>
-                {# Colors #}
-                <div class="d-flex mb-4">
-                    <p class="text-dark font-weight-medium mb-0 mr-3">Colors:</p>
-                    <form>
+                    </div>
+                    {# Colors #}
+                    <div class="d-flex mb-4">
+                        <p class="text-dark font-weight-medium mb-0 mr-3">Colors:</p>
                         <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" class="custom-control-input" id="color-1" name="color">
+                            <input type="radio" class="custom-control-input" id="color-1" value="Black" name="color">
                             <label class="custom-control-label" for="color-1">Black</label>
                         </div>
                         <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" class="custom-control-input" id="color-2" name="color">
+                            <input type="radio" class="custom-control-input" id="color-2" value="White" name="color">
                             <label class="custom-control-label" for="color-2">White</label>
                         </div>
                         <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" class="custom-control-input" id="color-3" name="color">
+                            <input type="radio" class="custom-control-input" id="color-3" value="Red" name="color">
                             <label class="custom-control-label" for="color-3">Red</label>
                         </div>
                         <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" class="custom-control-input" id="color-4" name="color">
+                            <input type="radio" class="custom-control-input" id="color-4" value="Blue" name="color">
                             <label class="custom-control-label" for="color-4">Blue</label>
                         </div>
                         <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" class="custom-control-input" id="color-5" name="color">
+                            <input type="radio" class="custom-control-input" id="color-5" value="Green" name="color">
                             <label class="custom-control-label" for="color-5">Green</label>
                         </div>
-                    </form>
-                </div>
-                {# Cart control #}
-                <div class="d-flex align-items-center mb-4 pt-2">
-                    <div class="input-group quantity mr-3" style="width: 130px;">
-                        <div class="input-group-btn">
-                            <button class="btn btn-primary btn-minus" >
-                            <i class="fa fa-minus"></i>
-                            </button>
-                        </div>
-                        <input type="text" class="form-control bg-secondary text-center" value="1">
-                        <div class="input-group-btn">
-                            <button class="btn btn-primary btn-plus">
-                                <i class="fa fa-plus"></i>
-                            </button>
-                        </div>
                     </div>
-                    <button class="btn btn-primary px-3"><i class="fa fa-shopping-cart mr-1"></i> Add To Cart</button>
-                </div>
+                    {# Cart control #}
+                    <div class="d-flex align-items-center mb-4 pt-2">
+                        <div class="input-group quantity mr-3" style="width: 130px;">
+                            <div class="input-group-btn">
+                                <button class="btn btn-primary btn-minus">
+                                    <i class="fa fa-minus"></i>
+                                </button>
+                            </div>
+                            <input type="text" class="form-control bg-secondary text-center" value="1" name="amount">
+                            <div class="input-group-btn">
+                                <button class="btn btn-primary btn-plus">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <input type="hidden" value="{{ item_info.pk }}" name="item_info_id">
+                        <input type="submit" class="btn btn-primary px-3" value="Add To Cart"><i
+                            class="fa fa-shopping-cart mr-1"></i>
+                    </div>
+                </form>
                 {# Share #}
                 <div class="d-flex pt-2">
                     <p class="text-dark font-weight-medium mb-0 mr-2">Share on:</p>
@@ -130,13 +133,19 @@
                         <h4 class="mb-3">Product Description</h4>
                         <p>{% if item_info.description %}
                             {{ item_info.description }}
-                           {% else %}
+                        {% else %}
                             Too good to be described
-                           {% endif %}</p>
+                        {% endif %}</p>
                     </div>
                     <div class="tab-pane fade" id="tab-pane-2">
                         <h4 class="mb-3">Additional Information</h4>
-                        <p>Eos no lorem eirmod diam diam, eos elitr et gubergren diam sea. Consetetur vero aliquyam invidunt duo dolores et duo sit. Vero diam ea vero et dolore rebum, dolor rebum eirmod consetetur invidunt sed sed et, lorem duo et eos elitr, sadipscing kasd ipsum rebum diam. Dolore diam stet rebum sed tempor kasd eirmod. Takimata kasd ipsum accusam sadipscing, eos dolores sit no ut diam consetetur duo justo est, sit sanctus diam tempor aliquyam eirmod nonumy rebum dolor accusam, ipsum kasd eos consetetur at sit rebum, diam kasd invidunt tempor lorem, ipsum lorem elitr sanctus eirmod takimata dolor ea invidunt.</p>
+                        <p>Eos no lorem eirmod diam diam, eos elitr et gubergren diam sea. Consetetur vero aliquyam
+                            invidunt duo dolores et duo sit. Vero diam ea vero et dolore rebum, dolor rebum eirmod
+                            consetetur invidunt sed sed et, lorem duo et eos elitr, sadipscing kasd ipsum rebum diam.
+                            Dolore diam stet rebum sed tempor kasd eirmod. Takimata kasd ipsum accusam sadipscing, eos
+                            dolores sit no ut diam consetetur duo justo est, sit sanctus diam tempor aliquyam eirmod
+                            nonumy rebum dolor accusam, ipsum kasd eos consetetur at sit rebum, diam kasd invidunt
+                            tempor lorem, ipsum lorem elitr sanctus eirmod takimata dolor ea invidunt.</p>
                         <div class="row">
                             <div class="col-md-6">
                                 <ul class="list-group list-group-flush">
@@ -152,7 +161,7 @@
                                     <li class="list-group-item px-0">
                                         Takimata ea clita labore amet ipsum erat justo voluptua. Nonumy.
                                     </li>
-                                  </ul>
+                                </ul>
                             </div>
                             <div class="col-md-6">
                                 <ul class="list-group list-group-flush">
@@ -168,7 +177,7 @@
                                     <li class="list-group-item px-0">
                                         Takimata ea clita labore amet ipsum erat justo voluptua. Nonumy.
                                     </li>
-                                  </ul>
+                                </ul>
                             </div>
                         </div>
                     </div>

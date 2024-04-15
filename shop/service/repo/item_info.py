@@ -5,6 +5,7 @@
     https://docs.djangoproject.com/en/5.0/topics/db/managers/
 """
 from django.db import models
+from django.db.models import Q
 
 
 class ItemInfoQuerySet(models.QuerySet):
@@ -16,14 +17,16 @@ class ItemInfoQuerySet(models.QuerySet):
         """Список трендовых товаров на витрине."""
         return [self.form_aggregate(item_info) for item_info in self.with_photos.filter(is_trandy=True)]
 
-    def get_catalog(self) -> list[models.Model]:
+    def get_catalog(self, filter_arg: Q | None = None) -> list[models.Model]:
         """Каталог товаров на витрине."""
-        return [self.form_aggregate(item_info) for item_info in self.with_photos]
+        item_infos = self.with_photos.filter(filter_arg) if filter_arg else self.with_photos.all()
+        return [self.form_aggregate(item_info) for item_info in item_infos]
 
     def get_aggregate(self, pk) -> models.Model:
         """Сборка агрегата models.ItemInfo."""
-        item_info = self.with_photos.filter(pk=pk).first()
-        return self.form_aggregate(item_info)
+        if item_info := self.with_photos.filter(pk=pk).first():
+            return self.form_aggregate(item_info)
+        raise self.model.DoesNotExist
 
     @staticmethod
     def form_aggregate(item_info) -> models.Model:

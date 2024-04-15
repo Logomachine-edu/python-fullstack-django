@@ -21,13 +21,13 @@ class ItemInline(admin.TabularInline):
 
 @admin.register(models.ItemInfo)
 class ItemInfoAdmin(admin.ModelAdmin):
-    list_display = ("name", "summary", "price", "title_photo")
+    list_display = ("name", "summary", "price")
     inlines = (ItemsPhotoInline,)
 
 
 @admin.register(models.Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ("customer", "is_payed", "get_current_total_price", "get_total_items")
+    list_display = ("customer", "is_payed")
     inlines = (ItemInline,)
 
 
