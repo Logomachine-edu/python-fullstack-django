@@ -3,6 +3,7 @@ from datetime import datetime
 from decimal import Decimal
 
 from django.db import models
+from django.db.models.fields.files import FieldFile
 
 from shop.fields import PriceField
 from shop.service.repo.item_showcase import item_info_repository
@@ -38,10 +39,13 @@ class ItemInfo(models.Model):
         raise Exception("Call item_info_repository.form_aggregate to use this property.")
 
     @property
-    def title_photo(self):
+    def title_photo(self) -> FieldFile | str:
         """Титульное фото товара."""
-        photo = self.photos[0]
-        return photo.file if photo else "-"
+        try:
+            photo = self.photos[0]
+        except IndexError:
+            return "-"
+        return photo.file
 
 
 class ItemsPhoto(models.Model):
@@ -51,7 +55,7 @@ class ItemsPhoto(models.Model):
         """Генерация пути файла."""
         return f"items_photos/{self.item_info.pk}/{filename}"
 
-    file = models.ImageField(upload_to=get_file_path)
+    file: FieldFile = models.ImageField(upload_to=get_file_path)
     item_info: "ItemInfo" = models.ForeignKey(
         "shop.ItemInfo", on_delete=models.CASCADE, related_name="photo_set", related_query_name="photo_set"
     )

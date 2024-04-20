@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from decimal import Decimal
 
 from django.db.models import Q
+from django.db.models.fields.files import FieldFile
 
 from shop.models import Customer, Item, ItemInfo, Order
 
@@ -28,7 +29,7 @@ class CustomerService:
 @dataclass
 class ItemInCart:
     pk: int
-    product_photo_file: ...
+    product_photo_file: FieldFile
     product_name: str
     price: Decimal
     quantity: int
