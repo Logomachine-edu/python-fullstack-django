@@ -55,7 +55,7 @@ class CartService:
             raise Exception("CartService is not available for payed orders.")
 
     def compose_detailed_info(self) -> DetailedCart:
-        """Составить детальную информацию о корзине."""
+        """Составить детальную информацию о заказе."""
         items: dict[int, ItemInCart] = {}
         subtotal = Decimal(0)
 
@@ -89,18 +89,12 @@ class CartService:
 
     def add_item_copy(self, item: Item) -> None:
         """Увеличить количество копий товара на 1."""
-        new_item = Item(order=self.cart, item_info=item.item_info, color=item.color, size=item.size)
-        new_item.save()
 
     def delete_item_copy(self, item: Item) -> None:
         """Уменьшить количество копий товара на 1."""
-        query_filter = Q(order_pk=self.cart.pk, item_info__pk=item.item_info.pk, color=item.color, size=item.size)
-        Item.objects.filter(pk__in=Item.objects.filter(query_filter).values_list("pk", flat=True)[0:1]).delete()
 
     def remove_all_item_copies(self, item: Item) -> None:
         """Удалить все копии товара."""
-        query_filter = Q(order_pk=self.cart.pk, item_info__pk=item.item_info.pk, color=item.color, size=item.size)
-        Item.objects.filter(pk__in=Item.objects.filter(query_filter).values_list("pk", flat=True)).delete()
 
     def pay(self) -> None:
         """Оплатить заказ и создать новую пустую корзину."""

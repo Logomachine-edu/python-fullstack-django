@@ -12,7 +12,7 @@ from django.db import migrations, models
 
 import shop.fields
 import shop.models
-import shop.models.item_info
+import shop.models.item_showcase
 
 
 class Migration(migrations.Migration):
@@ -184,7 +184,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "file",
-                    models.ImageField(upload_to=shop.models.item_info.ItemsPhoto.get_file_path),
+                    models.ImageField(upload_to=shop.models.item_showcase.ItemsPhoto.get_file_path),
                 ),
                 ("created_at", models.DateTimeField(auto_now_add=True)),
                 ("updated_at", models.DateTimeField(auto_now=True)),

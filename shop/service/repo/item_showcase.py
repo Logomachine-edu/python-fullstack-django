@@ -31,7 +31,7 @@ class ItemInfoQuerySet(models.QuerySet):
     @staticmethod
     def form_aggregate(item_info) -> models.Model:
         photos = list(item_info.photo_set.all())
-        item_info.photos = photos
+        item_info._photos = photos
         return item_info
 
     get = get_aggregate

@@ -1,10 +1,11 @@
+"""Модели для витрины."""
 from datetime import datetime
 from decimal import Decimal
 
 from django.db import models
 
 from shop.fields import PriceField
-from shop.service.repo.item_info import item_info_repository
+from shop.service.repo.item_showcase import item_info_repository
 
 
 class ItemInfo(models.Model):
@@ -21,12 +22,20 @@ class ItemInfo(models.Model):
     created_at: datetime = models.DateTimeField(auto_now_add=True)
     updated_at: datetime = models.DateTimeField(auto_now=True)
 
-    photos: list["ItemsPhoto"]  # Доступно при вызове form_aggregate
+    _photos: list["ItemsPhoto"] | None = None
     photo_set: models.Manager["ItemsPhoto"]  # RelatedManager
     objects = item_info_repository  # Расширенный Manager
 
     def __str__(self):
         return f"ItemInfo {self.name}"
+
+    @property
+    def photos(self) -> list["ItemsPhoto"]:
+        """Список фотографий."""
+
+        if self._photos is not None:
+            return self._photos
+        raise Exception("Call item_info_repository.form_aggregate to use this property.")
 
     @property
     def title_photo(self):
@@ -49,6 +58,9 @@ class ItemsPhoto(models.Model):
 
     created_at: datetime = models.DateTimeField(auto_now_add=True)
     updated_at: datetime = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("created_at",)
 
     def __str__(self):
         return f"Photo {self.file.name} for {self.item_info}"

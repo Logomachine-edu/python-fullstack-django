@@ -146,3 +146,4 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # Auth
 EASY_LOGIN = True
 AUTH_USER_MODEL = "shop.Customer"
+MESSAGE_STORAGE = "django.contrib.messages.storage.session.SessionStorage"  # Хранилище для хранения уведомлений

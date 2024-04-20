@@ -26,23 +26,28 @@ class CustomerQuerySet(models.QuerySet):
     @staticmethod
     def form_aggregate(customer):
         orders = list(customer.order_set.all())
-        customer.orders = orders
+        customer._orders = orders
         return customer
 
     get = get_aggregate
 
 
 class CustomerManager(UserManager.from_queryset(CustomerQuerySet)):
-    pass
+    """Репозиторий для работы с покупателями.
+
+    Перегружаем таким образом, чтобы сохранить методы из базового UserManager.
+    """
 
 
 customer_repository = CustomerManager()
 
 
 class AmountPerItemInfoMap(TypedDict):
-    item_info: int
-    item_info__price: Decimal
+    """Элемент результата запроса ItemQuerySet.get_amount_per_item_info_map."""
+
+    item_info: int  # Первичный ключ
     item_info__name: str
+    item_info__price: Decimal
     quantity: int
     total: Decimal
 

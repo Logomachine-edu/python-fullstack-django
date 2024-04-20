@@ -1,5 +1,6 @@
 from typing import Type
 
+from django.contrib import messages
 from django.db.transaction import atomic
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
@@ -8,19 +9,23 @@ from django.views.generic import TemplateView
 
 from shop.forms import AddToCartFrom, LoginForm
 from shop.models import ItemInfo
-from shop.models.customer import Customer
+from shop.models.order import Customer
 from shop.service.auth import authenticate_customer
-from shop.service.handlers.customer import CartService, CustomerService
+from shop.service.handlers.order import CartService, CustomerService
 
 
-def ep_login(request: HttpRequest) -> HttpResponse:
+def ep_login(request: HttpRequest, messages_provider=messages) -> HttpResponse:
     """Эндпоинт для описания страницы входа в аккаунт."""
     if request.method == "POST":
         form = LoginForm(request.POST)
         if form.is_valid():
             cleaned_data = form.cleaned_data
-            auth_result = authenticate_customer(request, cleaned_data["username"], cleaned_data["password"])
-            return redirect(to=request.headers["Referer"] or "/")
+            is_success, msg_text = authenticate_customer(request, cleaned_data["username"], cleaned_data["password"])
+            if is_success:
+                messages_provider.success(request=request, message=msg_text)
+                return redirect(to="/")
+            messages_provider.warning(request=request, message=msg_text)
+            return redirect(to=request.headers["Referer"])
     else:
         form = LoginForm()
     return render(request, "shop/login.html", {"form": form})
@@ -99,7 +104,7 @@ class BaseCartOperationsView(BaseShopView):
         *args,
         customer_service_cls: Type[CustomerService] = CustomerService,
         cart_service_cls: Type[CartService] = CartService,
-        **kwargs
+        **kwargs,
     ):
         """Реализация паттерна Инъекция зависимостей - поставляем сервисы в представление."""
         super().setup(request, customer_service_cls=customer_service_cls, *args, **kwargs)
@@ -109,7 +114,7 @@ class BaseCartOperationsView(BaseShopView):
 
 class AddItemToCart(BaseCartOperationsView):
     @atomic
-    def post(self, request: HttpRequest):
+    def post(self, request: HttpRequest, messages_provider=messages):
         form = AddToCartFrom(request.POST)
         if form.is_valid():
             cleaned_data = form.cleaned_data
@@ -117,4 +122,6 @@ class AddItemToCart(BaseCartOperationsView):
                 self.cart_service.add_item(
                     item_info_id=cleaned_data["item_info_id"], color=cleaned_data["color"], size=cleaned_data["size"]
                 )
+            messages_provider.success(request, f"Added to cart in quantity of {cleaned_data['amount']}")
+        messages_provider.warning(request, form.errors)
         return redirect(to=request.headers["Referer"] or "/")

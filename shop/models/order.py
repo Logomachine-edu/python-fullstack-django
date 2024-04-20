@@ -1,3 +1,5 @@
+"""Модели для заказов."""
+from dataclasses import dataclass
 from datetime import datetime
 from decimal import Decimal
 
@@ -5,15 +7,22 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 from shop.fields import PriceField
-from shop.service.repo.customer import customer_repository, item_repository
+from shop.service.repo.order import customer_repository, item_repository
 
 
 class Customer(AbstractUser):
     """Покупатель."""
 
-    orders: list["Order"]  # Доступно при вызове form_aggregate
+    _orders: list["Order"] | None = None
     order_set: models.Manager["Order"]  # RelatedManager
     objects = customer_repository  # Расширенный Manager
+
+    @property
+    def orders(self) -> list["Order"]:
+        """Список заказов."""
+        if self._orders is not None:
+            return self._orders
+        raise Exception("Call customer_repository.form_aggregate to use this property.")
 
 
 class Order(models.Model):
@@ -22,7 +31,7 @@ class Order(models.Model):
     is_payed: bool = models.BooleanField(default=False)
     shipping_price: Decimal = PriceField(default=Decimal(10))
     final_total_price: Decimal | None = PriceField(default=None, null=True)
-    customer = models.ForeignKey("shop.Customer", on_delete=models.CASCADE)
+    customer: "Customer" = models.ForeignKey("shop.Customer", on_delete=models.CASCADE)
 
     created_at: datetime = models.DateTimeField(auto_now_add=True)
     updated_at: datetime = models.DateTimeField(auto_now=True)
@@ -63,3 +72,14 @@ class Item(models.Model):
     def current_price(self) -> Decimal:
         """Текущая цена."""
         return self.item_info.price
+
+
+@dataclass
+class ItemInCart:
+    """Отображение товара в заказе."""
+
+    product_photo_file: ...
+    product_name: str
+    price: Decimal
+    quantity: int
+    total: Decimal
