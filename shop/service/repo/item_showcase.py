@@ -11,6 +11,7 @@ from django.db.models import Q
 class ItemInfoQuerySet(models.QuerySet):
     @property
     def with_photos(self) -> models.QuerySet:
+        """В результате запроса фотографии будут также запрошены."""
         return self.prefetch_related("photo_set")
 
     def get_trandy(self) -> list[models.Model]:

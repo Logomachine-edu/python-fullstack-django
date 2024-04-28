@@ -9,12 +9,13 @@ from typing import TypedDict
 
 from django.contrib.auth.models import UserManager
 from django.db import models
-from django.db.models import Count, Sum
+from django.db.models import Count, Manager, Sum
 
 
 class CustomerQuerySet(models.QuerySet):
     @property
     def with_orders(self) -> models.QuerySet:
+        """В результате запроса заказы будут также запрошены."""
         return self.prefetch_related("order_set")
 
     def get_aggregate(self, *args, **kwargs):
@@ -25,6 +26,7 @@ class CustomerQuerySet(models.QuerySet):
 
     @staticmethod
     def form_aggregate(customer):
+        """Формируем агрегат."""
         orders = list(customer.order_set.all())
         customer._orders = orders
         return customer
@@ -63,4 +65,4 @@ class ItemQuerySet(models.QuerySet):
         return base_query.annotate(quantity=Count("item_info"), total=Sum("item_info__price")).order_by("item_info")
 
 
-item_repository = ItemQuerySet.as_manager()
+item_repository: Manager = ItemQuerySet.as_manager()
