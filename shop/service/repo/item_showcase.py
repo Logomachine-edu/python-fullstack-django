@@ -23,10 +23,10 @@ class ItemInfoQuerySet(models.QuerySet):
         item_infos = self.with_photos.filter(filter_arg) if filter_arg else self.with_photos.all()
         return [self.form_aggregate(item_info) for item_info in item_infos]
 
-    def get_aggregate(self, pk) -> models.Model:
+    def get_aggregate(self, *args, **kwargs):
         """Сборка агрегата models.ItemInfo."""
-        if item_info := self.with_photos.filter(pk=pk).first():
-            return self.form_aggregate(item_info)
+        if customer := self.with_photos.filter(*args, **kwargs).first():
+            return self.form_aggregate(customer)
         raise self.model.DoesNotExist
 
     @staticmethod
